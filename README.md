@@ -9,10 +9,10 @@ The project combines:
 
 All scripts are executed inside Blender’s Text Editor, using the provided .blend file.
 
----
 
 ## 📁 Repository Structure
 
+```bash
 .
 ├── hand_jan.blend                 
 ├── RENDER.blend                   # Main working scene (preconfigured)
@@ -23,8 +23,7 @@ All scripts are executed inside Blender’s Text Editor, using the provided .ble
 ├── render.py                      # Multi-camera, multi-skin rendering
 └── README.md
 
-
----
+``` 
 
 ## 🧩 Pipeline Overview
 
@@ -37,24 +36,18 @@ The complete pipeline consists of the following logical steps:
 
 To avoid rig mismatch and animation transfer issues, all steps are performed inside a single Blender scene.
 
----
 
 ## 🛠 Requirements
 - Blender 4.x (tested on Blender 4.2 LTS)  
 - Apple Silicon with Metal support (for GPU rendering)  
 - F-PHAB dataset (placed under Hand_pose_annotation_v1/)  
 
----
-
 ## ▶️ How to Run (Recommended Workflow)
 
-⚠️ **Important**  
 - Open `RENDER.blend` first  
 - All scripts must be run via  
   `Blender → Scripting → Text Editor`  
 - Do not run scripts externally via Python  
-
----
 
 ## ✅ Main Usage (Using RENDER.blend)
 
@@ -68,7 +61,6 @@ The provided `RENDER.blend` file is already preconfigured and includes:
 
 👉 For normal use, you only need to run **TWO scripts**.
 
----
 
 ### Step 1 – Load Hand Motion from F-PHAB
 
@@ -76,22 +68,22 @@ Edit the dataset path in `load_skeleton.py`:
 ```python
 FILE_PATH = ".../Subject_1/wash_sponge/1/skeleton.txt"
 ```
-Then run: load_skeleton.py
+Then run: load_skeleton.py.
+
 What this script does:
-•	Reads skeleton.txt frame-by-frame
-•	Converts coordinates:
-	•	World → Camera (Cam_0)
-	•	Camera → Blender space
-•	Animates:
-	•	Wrist (armature object location)
-	•	MCP / PIP / TIP empties
-	•	Keeps IK constraints unchanged
+- Reads skeleton.txt frame-by-frame
+- Converts coordinates:
+	+ World → Camera (Cam_0)
+	+ Camera → Blender space
+- Animates:
+	+ Wrist (armature object location)
+	+ MCP / PIP / TIP empties
+	+ Keeps IK constraints unchanged
 
 ✅ Result:
-	•	The hand performs real motion from the dataset
-	•	Motion is temporally consistent
+- The hand performs real motion from the dataset
+- Motion is temporally consistent
 
-⸻
 
 ### Step 2 – Render Synthetic Data
 
@@ -99,17 +91,18 @@ Edit the configuration in render.py:
 ```python
 action_label = "wash_sponge"
 base_output_dir = "/path/to/render_output"
-```python
+``` 
 Then run: render.py
 What this script does:
-•	Enables Cycles GPU rendering (Metal)
-•	Iterates over:
-	•	All cameras (Cam_*)
-	•	Multiple skin materials (SkinA, SkinB, SkinC)
-	•	All animation frames
-	•	Renders images with transparent background
+- Enables Cycles GPU rendering (Metal)
+- Iterates over:
+	+ All cameras (Cam_*)
+	+ Multiple skin materials (SkinA, SkinB, SkinC)
+	+ All animation frames
+	+ Renders images with transparent background
 
 Output structure:
+```text
 render_output/
 └── wash_sponge/
     ├── Cam_1/
@@ -118,6 +111,7 @@ render_output/
     │   └── SkinC/
     ├── Cam_2/
     └── ...
+```
 
 ### 🧰 Base Scene Setup (Optional)
 
@@ -136,15 +130,11 @@ camera.py
 
 👉 These scripts should be run once during base scene preparation.
 
-⸻
-
 ### 📷 Camera Convention
 	•	Cam_0: Original first-person camera of the F-PHAB dataset
 	•	Cam_1 … Cam_N: Virtual cameras in Blender for synthetic data generation
 
 Hand motion follows the dataset viewpoint (Cam_0), while rendering uses additional cameras.
-
-⸻
 
 ### 🎯 Key Features
 	•	Skeleton-driven hand motion reconstruction
@@ -152,15 +142,11 @@ Hand motion follows the dataset viewpoint (Cam_0), while rendering uses addition
 	•	Multi-view and multi-skin synthetic data generation
 	•	Single-scene pipeline (no FBX import/export)
 	•	Suitable for hand pose and hand action recognition research
-
-⸻
-
+ 
 ### 🚧 Known Limitations
 	•	Finger overlap may occur in extreme poses
 	•	Anatomical accuracy depends on rig–dataset alignment
 	•	No physical collision handling between fingers
-
-⸻
 
 ### 📌 Notes
 	•	All scripts must be run inside Blender
